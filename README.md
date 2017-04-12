@@ -1,6 +1,7 @@
 # vue-moon-phase
 
 > A Vue.js project that diplays the current moon phase and days until the next full moon.
+> Uses moonmoji for groovy appropriate moon phases (https://github.com/rickycodes/moonmoji)
 
 ## Build Setup
 
