@@ -56,6 +56,7 @@ export default {
       })
     },
     getWeatherDynamic() {
+      this.$Progress.start()
       this.$http.get('http://api.aerisapi.com/forecasts/' + this.zip + '?from=today&to=today&client_id=jYskRupqMPlhogr2iY4i3&client_secret=pvhD0Ydih22gZXcIBDbpMzPlXdzVziJ0pyeRav3Y').then((response) => {
         this.weather = response.data.response[0].periods[0].weatherPrimary.toLowerCase();
       }),
@@ -63,6 +64,7 @@ export default {
           this.city = response.data.response[0].place.name;
 
         })
+        this.$Progress.finish()
     },
     getNextFull() {
       this.$http.get('http://api.aerisapi.com/sunmoon/moonphases/chattanooga,tn&search?query=type:full&limit=1&client_id=jYskRupqMPlhogr2iY4i3&client_secret=pvhD0Ydih22gZXcIBDbpMzPlXdzVziJ0pyeRav3Y').then((response) => {
@@ -79,21 +81,7 @@ export default {
     
   },
   created () {
-    //  [App.vue specific] When App.vue is first loaded start the progress bar
-    this.$Progress.start()
-    //  hook the progress bar to start before we move router-view
-    this.$router.beforeEach((to, from, next) => {
-      //  does the page we want to go to have a meta.progress object
-      if (to.meta.progress !== undefined) {
-        let meta = to.meta.progress
-        // parse meta tags
-        this.$Progress.parseMeta(meta)
-      }
-      //  start the progress bar
-      this.$Progress.start()
-      //  continue to next page
-      next()
-    })
+    this.$Progress.start()    
   }
 }
 </script>

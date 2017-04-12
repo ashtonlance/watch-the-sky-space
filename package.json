@@ -10,8 +10,11 @@
   },
   "dependencies": {
     "axios": "^0.16.1",
+    "buefy": "^0.1.5",
     "bulma": "^0.4.0",
+    "css-loader": "^0.25.0",
     "moonmoji": "^1.1.9",
+    "style-loader": "^0.16.1",
     "vue": "^2.2.1",
     "vue-axios": "^2.0.1",
     "vue-moment": "^2.0.2",
