@@ -10,10 +10,12 @@
   },
   "dependencies": {
     "axios": "^0.16.1",
+    "bulma": "^0.4.0",
     "moonmoji": "^1.1.9",
     "vue": "^2.2.1",
     "vue-axios": "^2.0.1",
-    "vue-moment": "^2.0.2"
+    "vue-moment": "^2.0.2",
+    "vue2-animate": "^1.0.4"
   },
   "devDependencies": {
     "babel-core": "^6.0.0",
@@ -26,7 +28,8 @@
     "sass-loader": "^5.0.1",
     "vue-loader": "^11.1.4",
     "vue-template-compiler": "^2.2.1",
-    "webpack": "^2.2.0",
+    "vuetify": "^0.10.4",
+    "webpack": "^2.3.3",
     "webpack-dev-server": "^2.2.0"
   }
 }
