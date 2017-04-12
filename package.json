@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "axios": "^0.16.1",
+    "moonmoji": "^1.1.9",
     "vue": "^2.2.1",
     "vue-axios": "^2.0.1",
     "vue-moment": "^2.0.2"

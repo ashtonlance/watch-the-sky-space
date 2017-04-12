@@ -1,15 +1,16 @@
 <template>
   <div id="app">
-    <img src="./assets/Earths_Moon.svg">
+    <div id="wrapper">
+    <span id="moonwrapper"> {{ moon }} </span>
     <h2>{{ phase }} :: {{ illum }}% full</h2>
     <p>next full moon :: {{ next }} days</p>
     <h3> {{ city }} </h3>
-
+    </div>
   </div>
 </template>
 
 <script>
-
+var moonmoji = require('moonmoji')();
 export default {
   name: 'app',
   data () {
@@ -17,7 +18,8 @@ export default {
       phase: '',
       illum: '',
       city: '',
-      next: ''
+      next: '',
+      moon: ''
     }
   },
   mounted() {
@@ -30,6 +32,8 @@ export default {
           this.phase = response.data.response[0].moon.phase.name;
           this.illum = response.data.response[0].moon.phase.illum;
           this.city = response.data.response[0].place.name;
+          this.moon = (moonmoji.emoji);
+          
         })
       },
       getNextFull() {
@@ -44,14 +48,20 @@ export default {
 </script>
 
 <style lang="scss">
+body {
+  background: linear-gradient(to top, #000000, #53346d);
+}
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #f2f2f2;
+  border-radius: 4px;  
+}
+#wrapper {
   background: rgba(black, 0.35);
-  border-radius: 4px;
+  padding: 25px;
 }
 
 h1, h2 {
@@ -75,5 +85,9 @@ img {
   max-width: 250px;
   margin-top: 15px;
   width: 50%;
+}
+#moonwrapper {
+  font-size: 120px;
+  margin-top: 25px;
 }
 </style>
