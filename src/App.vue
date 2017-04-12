@@ -1,7 +1,9 @@
 <template>
   <div id="app">
+    
     <section id="wrapper"
              class="hero is-primary">
+             <vue-progress-bar></vue-progress-bar>
       <div id="moonwrapper">
         <h4 class="title is-4">star-gazing forecast</h4> {{ moon }}
       </div>
@@ -50,7 +52,7 @@ export default {
         this.illum = response.data.response[0].moon.phase.illum;
         this.city = response.data.response[0].place.name;
         this.moon = (moonmoji.emoji);
-
+        this.$Progress.finish()
       })
     },
     getWeatherDynamic() {
@@ -74,7 +76,25 @@ export default {
     this.getPhase();
     this.getNextFull();
     this.getWeatherDynamic();
+    
   },
+  created () {
+    //  [App.vue specific] When App.vue is first loaded start the progress bar
+    this.$Progress.start()
+    //  hook the progress bar to start before we move router-view
+    this.$router.beforeEach((to, from, next) => {
+      //  does the page we want to go to have a meta.progress object
+      if (to.meta.progress !== undefined) {
+        let meta = to.meta.progress
+        // parse meta tags
+        this.$Progress.parseMeta(meta)
+      }
+      //  start the progress bar
+      this.$Progress.start()
+      //  continue to next page
+      next()
+    })
+  }
 }
 </script>
 
