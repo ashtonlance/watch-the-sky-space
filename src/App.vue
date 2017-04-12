@@ -1,21 +1,26 @@
 <template>
   <div id="app">
-    <section id="wrapper" class="hero is-primary">
+    <section id="wrapper"
+             class="hero is-primary">
       <div id="moonwrapper">
-        <h4 class="title is-4">star-gazing forecast</h4>
-        {{ moon }}
-         </div>
-      <div style="padding: 2.5rem 0.5rem;" class="hero-body">
-      <h2 class="title is-4">{{ phase }} :: {{ illum }}% full</h2>
-      <p>next full moon :: {{ next }} days</p>
+        <h4 class="title is-4">star-gazing forecast</h4> {{ moon }}
+      </div>
+      <div style="padding: 2.5rem 0.5rem;"
+           class="hero-body">
+        <h2 class="title is-4">{{ phase }} :: {{ illum }}% full</h2>
+        <p>next full moon :: {{ next }} days</p>
       </div>
   
       <div id="weatherwrapper">
         <h1 class="title"> {{ weather }} </h1>
         <h2 class="subtitle">weather for {{ city }} </h2>
-        <input style="margin:10px auto;" class="label" type="text" v-model="zip"
+        <input style="margin:10px auto;"
+               class="label"
+               type="text"
+               v-model="zip"
                placeholder="Enter Zip Code">
-        <button class="button is-dark" v-on:click="getWeatherDynamic()">enter</button>
+        <button class="button is-dark"
+                v-on:click="getWeatherDynamic()">enter</button>
       </div>
     </section>
   </div>
@@ -50,13 +55,12 @@ export default {
     },
     getWeatherDynamic() {
       this.$http.get('http://api.aerisapi.com/forecasts/' + this.zip + '?from=today&to=today&client_id=jYskRupqMPlhogr2iY4i3&client_secret=pvhD0Ydih22gZXcIBDbpMzPlXdzVziJ0pyeRav3Y').then((response) => {
-        console.log(response.data)
         this.weather = response.data.response[0].periods[0].weatherPrimary.toLowerCase();
       }),
-      this.$http.get('http://api.aerisapi.com/sunmoon/' + this.zip + '?client_id=jYskRupqMPlhogr2iY4i3&client_secret=pvhD0Ydih22gZXcIBDbpMzPlXdzVziJ0pyeRav3Y').then((response) => {
-        this.city = response.data.response[0].place.name;
+        this.$http.get('http://api.aerisapi.com/sunmoon/' + this.zip + '?client_id=jYskRupqMPlhogr2iY4i3&client_secret=pvhD0Ydih22gZXcIBDbpMzPlXdzVziJ0pyeRav3Y').then((response) => {
+          this.city = response.data.response[0].place.name;
 
-      })
+        })
     },
     getNextFull() {
       this.$http.get('http://api.aerisapi.com/sunmoon/moonphases/chattanooga,tn&search?query=type:full&limit=1&client_id=jYskRupqMPlhogr2iY4i3&client_secret=pvhD0Ydih22gZXcIBDbpMzPlXdzVziJ0pyeRav3Y').then((response) => {
@@ -75,8 +79,6 @@ export default {
 </script>
 
 <style lang="scss">
-
-
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -86,48 +88,47 @@ export default {
   background: linear-gradient(to bottom, #2c3e50, #3498db);
 
 
-#wrapper {
-  background: rgba(#000, 0.35);
-  padding: 25px;
-  padding-top: 5px;
-  
-}
+  #wrapper {
+    background: rgba(#000, 0.35);
+    padding: 25px;
+    padding-top: 5px;
+  }
 
-h1,
-h2 {
-  font-weight: normal;
-}
+  h1,
+  h2 {
+    font-weight: normal;
+  }
 
-ul {
-  list-style-type: none;
-  padding: 0;
-}
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
 
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
+  li {
+    display: inline-block;
+    margin: 0 10px;
+  }
 
-a {
-  color: #42b983;
-}
+  a {
+    color: #42b983;
+  }
 
-img {
-  max-width: 250px;
-  margin-top: 15px;
-  width: 50%;
-}
+  img {
+    max-width: 250px;
+    margin-top: 15px;
+    width: 50%;
+  }
 
-#moonwrapper {
-  font-size: 120px;
-  margin-top: 25px;
-}
+  #moonwrapper {
+    font-size: 120px;
+    margin-top: 25px;
+  }
 
-#weatherwrapper {
-  
-  border-radius: 4px;
-  padding: 5px;
-}
+  #weatherwrapper {
+
+    border-radius: 4px;
+    padding: 5px;
+  }
 }
 </style>
 

@@ -1,4 +1,4 @@
-# vue-moon-phase
+# vue-stargazing-forecast
 
 > A Vue.js project that diplays the current moon phase and days until the next full moon.
 
