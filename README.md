@@ -1,6 +1,6 @@
-# vue-test-webpack-simple
+# vue-moon-phase
 
-> A Vue.js project
+> A Vue.js project that diplays the current moon phase and days until the next full moon.
 
 ## Build Setup
 
