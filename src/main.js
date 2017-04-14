@@ -8,7 +8,6 @@ import VueProgressBar from 'vue-progressbar'
 import Buefy from 'buefy'
 import 'buefy/lib/buefy.css'
 
-
 Vue.use(require('vue-moment'));
 Vue.use(VueAxios, axios)
 Vue.use(Vuetify)
@@ -19,7 +18,7 @@ const options = {
   failedColor: '#874b4b',
   thickness: '5px',
   transition: {
-    speed: '0.8s',
+    speed: '0.2s',
     opacity: '0.3s'
   },
   autoRevert: true,
@@ -32,5 +31,5 @@ Vue.use(VueProgressBar, options)
 
 new Vue({
   el: '#app',
-  render: h => h(App)
+  render: h => h(App),
 })

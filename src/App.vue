@@ -7,26 +7,35 @@
       <div id="moonwrapper">
         <h4 class="title is-4">star-gazing forecast</h4> {{ moon }}
       </div>
-      <div style="padding: 2.5rem 0.5rem;"
+      <div style="padding-top: 0; padding-left:0.75rem;padding-right:0.75rem;padding-bottom:0"
            class="hero-body">
   
-        <h2 class="title is-4 is-spaced">{{ phase }} :: {{ illum }}% full</h2>
-        <p class="subtitle is-spaced">sunset in {{ sunset }} hours</p>
-        <p class="subtitle">next full moon :: {{ next }} days</p>
+        <h1 class="title is-3 is-spaced">{{ phase }}</h1>
+        <h2 class="title is-4 is-marginless">the moon is {{ illum }}% full</h2>
+        <p class="subtitle is-marginless">next full moon is in {{ next }} days</p>
+        <p class="subtitle is-marginless">next new moon is in {{ nextnew }} days</p>
+        <p class="subtitle is-4"
+           v-if="!sunhasset" style="margin-bottom:1rem;">sunset in {{ sunset }} hours</p>
+        <p class="subtitle is-4"
+           v-if="sunhasset" style="margin-bottom:1rem;">sunrise in {{ sunrise }} hours</p>
+        <h2 class="subtitle is-marginless">conditions tonight in {{ city }} </h2>
+        <h1 class="title is-marginless">will be {{ weather }} </h1>
       </div>
   
-      <div id="weatherwrapper" class="is-spaced">
-        <h1 class="title is-marginless"> {{ weather }} </h1>
-        <h2 class="subtitle is-marginless">tonight's forecast for {{ city }} </h2>
+      <div id="weatherwrapper"
+           class="is-spaced">
   
-        <b-field position="centered">
+        <b-field position="centered"
+                 style="margin-top:5px;">
           <b-input class="label"
                    type="text"
                    v-model="zip"
-                   placeholder="Enter Zip Code"></b-input>
+                   placeholder="enter zip code"></b-input>
           <p class="control">
             <button class="button is-dark"
-                    v-on:click="getWeatherDynamic()">enter</button>
+                    v-on:click="getWeatherDynamic()">
+              <b-icon icon="near_me"></b-icon>
+              <span>enter</span></button>
           </p>
         </b-field>
       </div>
@@ -48,12 +57,16 @@ export default {
       moon: '',
       zip: '37408',
       weather: '',
-      sunset: ''
+      sunset: '',
+      lat: '',
+      long: '',
+      sunhasset: false,
+      nextnew: ''
     }
   },
 
   methods: {
-    
+
     getPhase() {
       this.$http.get('http://api.aerisapi.com/sunmoon/37408?client_id=jYskRupqMPlhogr2iY4i3&client_secret=pvhD0Ydih22gZXcIBDbpMzPlXdzVziJ0pyeRav3Y').then((response) => {
         this.phase = response.data.response[0].moon.phase.name;
@@ -65,66 +78,93 @@ export default {
     },
     getWeatherDynamic() {
       this.$Progress.start()
-      let startOfNight = this.$moment().format('YYYY-MM-DD 20:00')
+      let startOfNight = this.$moment().format('YYYY-MM-DD') + 'T22:00:00-04:00'
       let now = this.$moment(startOfNight).format()
-      // now = this.$moment(now).format('YYYY-MM-DD HH:mm ')
-      let tonight = this.$moment(now).add(12, 'h').format('YYYY-MM-DD HH:mm')
+      this.tonight = this.$moment(now).add(4, 'h').format('YYYY-MM-DD hh:mm:ss')
+      this.tonight = this.$moment(this.tonight).format()
       this.zip = localStorage.getItem('zip'),
-      
-      this.$http.get('http://api.aerisapi.com/forecasts/' + this.zip + '?from=' + now + '&to=' + tonight + '&client_id=jYskRupqMPlhogr2iY4i3&client_secret=pvhD0Ydih22gZXcIBDbpMzPlXdzVziJ0pyeRav3Y').then((response) => {
-        this.weather = response.data.response[0].periods[0].weatherPrimary.toLowerCase();
-      }),
+
         this.$http.get('http://api.aerisapi.com/sunmoon/' + this.zip + '?client_id=jYskRupqMPlhogr2iY4i3&client_secret=pvhD0Ydih22gZXcIBDbpMzPlXdzVziJ0pyeRav3Y').then((response) => {
+
+          this.lat = response.data.response[0].loc.lat;
+          this.long = response.data.response[0].loc.long;
           this.city = response.data.response[0].place.name;
-          let sunsetRaw = (response.data.response[0].sun.setISO);
+          let sunsetRaw = response.data.response[0].sun.setISO;
           let today = this.$moment().format();
           this.sunset = this.$moment(sunsetRaw).diff(today, 'hours');
+
+          if (this.sunset <= 0) {
+            this.$http.get('http://api.aerisapi.com/sunmoon/' + this.zip + '?from=tomorrow&to=tomorrow&client_id=jYskRupqMPlhogr2iY4i3&client_secret=pvhD0Ydih22gZXcIBDbpMzPlXdzVziJ0pyeRav3Y').then((response) => {
+              this.sunhasset = true
+              let sunRiseRaw = response.data.response[1].sun.riseISO
+              let today = this.$moment().format();
+              this.sunrise = this.$moment(sunRiseRaw).diff(today, 'hours');
+            })
+          } else {
+            this.sunhasset = false
+          }
+
+          this.$http.get('https://crossorigin.me/https://api.darksky.net/forecast/bfef1e60cd8ad4b63a54b6074f7ce189/' + this.lat + ',' + this.long + ',' + this.tonight).then((response) => {
+            
+            this.weather = response.data.currently.summary.toLowerCase();
+          })
         })
-      this.$Progress.finish()
+        this.$Progress.finish()
+      
     },
     getNextFull() {
-      this.$http.get('http://api.aerisapi.com/sunmoon/moonphases/chattanooga,tn&search?query=type:full&limit=1&client_id=jYskRupqMPlhogr2iY4i3&client_secret=pvhD0Ydih22gZXcIBDbpMzPlXdzVziJ0pyeRav3Y').then((response) => {
-        let nextRaw = (response.data.response[0].dateTimeISO);
+      this.$http.get('http://api.aerisapi.com/sunmoon/moonphases/chattanooga,tn&search?query=type:new;type:full&limit=2&client_id=jYskRupqMPlhogr2iY4i3&client_secret=pvhD0Ydih22gZXcIBDbpMzPlXdzVziJ0pyeRav3Y').then((response) => {
+        
+        let nextRaw = (response.data.response[1].dateTimeISO);
+        let newRawNew = (response.data.response[0].dateTimeISO);
         let today = this.$moment().format();
         this.next = this.$moment(nextRaw).diff(today, 'days');
-        this.$Progress.finish()
+        this.nextnew = this.$moment(newRawNew).diff(today, 'days');
+        
       })
     }
   },
   mounted() {
+    this.getWeatherDynamic();
     this.getPhase();
     this.getNextFull();
-    this.getWeatherDynamic();
+    
 
   },
   created() {
     this.$Progress.start()
   },
   watch: {
-    zip() { 
-        localStorage.setItem('zip', this.zip)    
+    zip() {
+      localStorage.setItem('zip', this.zip)
     }
-}
+  }
 }
 </script>
 
 <style lang="scss">
 html {
-  height: 100%;
+    -webkit-text-size-adjust: 100%; 
 }
 
 body {
   position: absolute;
-  overflow: hidden;
+  overflow: scroll;
   margin: 0;
   padding: 0;
   width: 100%;
   height: 100%;
   top: 0;
   left: 0;
+  background: linear-gradient(to top, #2c3e50, #3498db);
+  background-repeat: no-repeat;
+  background-attachment: scroll;
 }
 
 #app {
+  display: block;
+  position: absolute;
+  width: 100%;
   height: 100%;
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -132,11 +172,16 @@ body {
   text-align: center;
   color: #f2f2f2;
   background: linear-gradient(to bottom, #2c3e50, #3498db);
-
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  top: 0;
+  left: 0;
+}
 
   #wrapper {
     height: 100%;
-    background: rgba(#000, 0.35);
+    // background: rgba(#000, 0.35);
+    background: linear-gradient(to bottom, #2c3e50, #3498db);
     padding: 25px;
     padding-top: 5px;
   }
@@ -174,8 +219,15 @@ body {
   #weatherwrapper {
     border-radius: 4px;
     padding: 5px;
-    margin-bottom: 15%;
+    margin-bottom: 20%;
   }
+
+  @media only screen and (min-width: 320px) and (max-width: 769px) and (orientation : landscape) {
+  #app {
+    height: 200vh;
+  }
+
 }
+
 </style>
 
