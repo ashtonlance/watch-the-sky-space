@@ -15,9 +15,11 @@
         <p class="subtitle is-marginless">next full moon is in {{ next }} days</p>
         <p class="subtitle is-marginless">next new moon is in {{ nextnew }} days</p>
         <p class="subtitle is-4"
-           v-if="!sunhasset" style="margin-bottom:1rem;">sunset in {{ sunset }} hours</p>
+           v-if="!sunhasset"
+           style="margin-bottom:1rem;">sunset in {{ sunset }} hours</p>
         <p class="subtitle is-4"
-           v-if="sunhasset" style="margin-bottom:1rem;">sunrise in {{ sunrise }} hours</p>
+           v-if="sunhasset"
+           style="margin-bottom:1rem;">sunrise in {{ sunrise }} hours</p>
         <h2 class="subtitle is-marginless">conditions tonight in {{ city }} </h2>
         <h1 class="title is-marginless">will be {{ weather }} </h1>
       </div>
@@ -105,22 +107,22 @@ export default {
           }
 
           this.$http.get('https://crossorigin.me/https://api.darksky.net/forecast/bfef1e60cd8ad4b63a54b6074f7ce189/' + this.lat + ',' + this.long + ',' + this.tonight).then((response) => {
-            
+
             this.weather = response.data.currently.summary.toLowerCase();
           })
         })
-        this.$Progress.finish()
-      
+      this.$Progress.finish()
+
     },
     getNextFull() {
       this.$http.get('http://api.aerisapi.com/sunmoon/moonphases/chattanooga,tn&search?query=type:new;type:full&limit=2&client_id=jYskRupqMPlhogr2iY4i3&client_secret=pvhD0Ydih22gZXcIBDbpMzPlXdzVziJ0pyeRav3Y').then((response) => {
-        
+
         let nextRaw = (response.data.response[1].dateTimeISO);
         let newRawNew = (response.data.response[0].dateTimeISO);
         let today = this.$moment().format();
         this.next = this.$moment(nextRaw).diff(today, 'days');
         this.nextnew = this.$moment(newRawNew).diff(today, 'days');
-        
+
       })
     }
   },
@@ -128,7 +130,7 @@ export default {
     this.getWeatherDynamic();
     this.getPhase();
     this.getNextFull();
-    
+
 
   },
   created() {
@@ -144,21 +146,7 @@ export default {
 
 <style lang="scss">
 html {
-    -webkit-text-size-adjust: 100%; 
-}
-
-body {
-  position: absolute;
-  overflow: scroll;
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  background: linear-gradient(to top, #2c3e50, #3498db);
-  background-repeat: no-repeat;
-  background-attachment: scroll;
+  -webkit-text-size-adjust: 100%;
 }
 
 #app {
@@ -178,56 +166,28 @@ body {
   left: 0;
 }
 
-  #wrapper {
-    height: 100%;
-    // background: rgba(#000, 0.35);
-    background: linear-gradient(to bottom, #2c3e50, #3498db);
-    padding: 25px;
-    padding-top: 5px;
-  }
+#wrapper {
+  height: 100%; // background: rgba(#000, 0.35);
+  background: linear-gradient(to bottom, #2c3e50, #3498db);
+  padding: 25px;
+  padding-top: 5px;
+}
 
-  h1,
-  h2 {
-    font-weight: normal;
-  }
+#moonwrapper {
+  font-size: 120px;
+  margin-top: 25px;
+}
 
-  ul {
-    list-style-type: none;
-    padding: 0;
-  }
+#weatherwrapper {
+  border-radius: 4px;
+  padding: 5px;
+  margin-bottom: 20%;
+}
 
-  li {
-    display: inline-block;
-    margin: 0 10px;
-  }
-
-  a {
-    color: #42b983;
-  }
-
-  img {
-    max-width: 250px;
-    margin-top: 15px;
-    width: 50%;
-  }
-
-  #moonwrapper {
-    font-size: 120px;
-    margin-top: 25px;
-  }
-
-  #weatherwrapper {
-    border-radius: 4px;
-    padding: 5px;
-    margin-bottom: 20%;
-  }
-
-  @media only screen and (min-width: 320px) and (max-width: 769px) and (orientation : landscape) {
+@media only screen and (min-width: 320px) and (max-width: 769px) and (orientation: landscape) {
   #app {
     height: 200vh;
   }
-
 }
-
 </style>
 
