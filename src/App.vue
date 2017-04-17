@@ -80,7 +80,6 @@ export default {
       })
     },
    getWeatherDynamic() {
-      this.$Progress.start()
       let startOfNight = this.$moment().format('YYYY-MM-DD') + 'T22:00:00-04:00'
       let now = this.$moment(startOfNight).format()
       this.tonight = this.$moment(now).add(4, 'h').format('YYYY-MM-DD hh:mm:ss')
