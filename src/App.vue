@@ -1,9 +1,10 @@
 <template>
+
   <div id="app">
-  
+    <vue-progress-bar></vue-progress-bar>
     <section id="wrapper"
              class="hero is-primary">
-      <vue-progress-bar></vue-progress-bar>
+      
       <div id="moonwrapper">
         <h4 class="title is-4">star-gazing forecast</h4> {{ moon }}
       </div>
@@ -78,7 +79,7 @@ export default {
 
       })
     },
-    getWeatherDynamic() {
+   getWeatherDynamic() {
       this.$Progress.start()
       let startOfNight = this.$moment().format('YYYY-MM-DD') + 'T22:00:00-04:00'
       let now = this.$moment(startOfNight).format()
@@ -86,7 +87,7 @@ export default {
       this.tonight = this.$moment(this.tonight).format()
       this.zip = localStorage.getItem('zip'),
 
-        this.$http.get('http://api.aerisapi.com/sunmoon/' + this.zip + '?client_id=jYskRupqMPlhogr2iY4i3&client_secret=pvhD0Ydih22gZXcIBDbpMzPlXdzVziJ0pyeRav3Y').then((response) => {
+         this.$http.get('http://api.aerisapi.com/sunmoon/' + this.zip + '?client_id=jYskRupqMPlhogr2iY4i3&client_secret=pvhD0Ydih22gZXcIBDbpMzPlXdzVziJ0pyeRav3Y').then((response) => {
 
           this.lat = response.data.response[0].loc.lat;
           this.long = response.data.response[0].loc.long;
@@ -98,7 +99,7 @@ export default {
           if (this.sunset <= 0) {
             this.$http.get('http://api.aerisapi.com/sunmoon/' + this.zip + '?from=tomorrow&to=tomorrow&client_id=jYskRupqMPlhogr2iY4i3&client_secret=pvhD0Ydih22gZXcIBDbpMzPlXdzVziJ0pyeRav3Y').then((response) => {
               this.sunhasset = true
-              let sunRiseRaw = response.data.response[1].sun.riseISO
+              let sunRiseRaw = response.data.response[0].sun.riseISO
               let today = this.$moment().format();
               this.sunrise = this.$moment(sunRiseRaw).diff(today, 'hours');
             })
@@ -106,13 +107,14 @@ export default {
             this.sunhasset = false
           }
 
-          this.$http.get('https://crossorigin.me/https://api.darksky.net/forecast/bfef1e60cd8ad4b63a54b6074f7ce189/' + this.lat + ',' + this.long + ',' + this.tonight).then((response) => {
+          this.$http.get('http://cors-anywhere.herokuapp.com/https://api.darksky.net/forecast/bfef1e60cd8ad4b63a54b6074f7ce189/' + this.lat + ',' + this.long + ',' + this.tonight).then((response) => {
 
             this.weather = response.data.currently.summary.toLowerCase();
           })
-        })
-      this.$Progress.finish()
+         
 
+        })
+      
     },
     getNextFull() {
       this.$http.get('http://api.aerisapi.com/sunmoon/moonphases/chattanooga,tn&search?query=type:new;type:full&limit=2&client_id=jYskRupqMPlhogr2iY4i3&client_secret=pvhD0Ydih22gZXcIBDbpMzPlXdzVziJ0pyeRav3Y').then((response) => {
@@ -122,15 +124,15 @@ export default {
         let today = this.$moment().format();
         this.next = this.$moment(nextRaw).diff(today, 'days');
         this.nextnew = this.$moment(newRawNew).diff(today, 'days');
-
+         this.$Progress.finish()
       })
     }
   },
-  mounted() {
+  beforeMount() {
     this.getWeatherDynamic();
     this.getPhase();
     this.getNextFull();
-
+    this.zip = localStorage.getItem('zip')
 
   },
   created() {
