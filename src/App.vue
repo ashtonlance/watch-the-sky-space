@@ -1,10 +1,9 @@
 <template>
-
   <div id="app">
     <vue-progress-bar></vue-progress-bar>
     <section id="wrapper"
              class="hero is-primary">
-      
+  
       <div id="moonwrapper">
         <h4 class="title is-4">star-gazing forecast</h4> {{ moon }}
       </div>
@@ -48,6 +47,8 @@
 
 <script>
 var moonmoji = require('moonmoji')();
+var zipcodes = require('zipcodes');
+
 
 export default {
   name: 'app',
@@ -74,46 +75,49 @@ export default {
       this.$http.get('http://api.aerisapi.com/sunmoon/37408?client_id=jYskRupqMPlhogr2iY4i3&client_secret=pvhD0Ydih22gZXcIBDbpMzPlXdzVziJ0pyeRav3Y').then((response) => {
         this.phase = response.data.response[0].moon.phase.name;
         this.illum = response.data.response[0].moon.phase.illum;
-        this.city = response.data.response[0].place.name;
         this.moon = (moonmoji.emoji);
 
       })
     },
-   getWeatherDynamic() {
+    getWeatherDynamic() {
       let startOfNight = this.$moment().format('YYYY-MM-DD') + 'T22:00:00-04:00'
       let now = this.$moment(startOfNight).format()
       this.tonight = this.$moment(now).add(4, 'h').format('YYYY-MM-DD hh:mm:ss')
       this.tonight = this.$moment(this.tonight).format()
-      this.zip = localStorage.getItem('zip'),
 
-         this.$http.get('http://api.aerisapi.com/sunmoon/' + this.zip + '?client_id=jYskRupqMPlhogr2iY4i3&client_secret=pvhD0Ydih22gZXcIBDbpMzPlXdzVziJ0pyeRav3Y').then((response) => {
+      this.zip = localStorage.getItem('zip')
+      var location = zipcodes.lookup(this.zip);
+      console.log(location)
+      this.lat = location.latitude;
+      this.long = location.latitude;
+      this.city = location.city.toLowerCase();
 
-          this.lat = response.data.response[0].loc.lat;
-          this.long = response.data.response[0].loc.long;
-          this.city = response.data.response[0].place.name;
-          let sunsetRaw = response.data.response[0].sun.setISO;
-          let today = this.$moment().format();
-          this.sunset = this.$moment(sunsetRaw).diff(today, 'hours');
 
-          if (this.sunset <= 0) {
-            this.$http.get('http://api.aerisapi.com/sunmoon/' + this.zip + '?from=tomorrow&to=tomorrow&client_id=jYskRupqMPlhogr2iY4i3&client_secret=pvhD0Ydih22gZXcIBDbpMzPlXdzVziJ0pyeRav3Y').then((response) => {
-              this.sunhasset = true
-              let sunRiseRaw = response.data.response[0].sun.riseISO
-              let today = this.$moment().format();
-              this.sunrise = this.$moment(sunRiseRaw).diff(today, 'hours');
-            })
-          } else {
-            this.sunhasset = false
-          }
+      this.$http.get('http://api.aerisapi.com/sunmoon/' + this.zip + '?client_id=jYskRupqMPlhogr2iY4i3&client_secret=pvhD0Ydih22gZXcIBDbpMzPlXdzVziJ0pyeRav3Y').then((response) => {
+        let sunsetRaw = response.data.response[0].sun.setISO;
+        let today = this.$moment().format();
+        this.sunset = this.$moment(sunsetRaw).diff(today, 'hours');
 
-          this.$http.get('http://cors-anywhere.herokuapp.com/https://api.darksky.net/forecast/bfef1e60cd8ad4b63a54b6074f7ce189/' + this.lat + ',' + this.long + ',' + this.tonight).then((response) => {
-
-            this.weather = response.data.currently.summary.toLowerCase();
+        if (this.sunset <= 0) {
+          this.$http.get('http://api.aerisapi.com/sunmoon/' + this.zip + '?from=tomorrow&to=tomorrow&client_id=jYskRupqMPlhogr2iY4i3&client_secret=pvhD0Ydih22gZXcIBDbpMzPlXdzVziJ0pyeRav3Y').then((response) => {
+            this.sunhasset = true
+            let sunRiseRaw = response.data.response[0].sun.riseISO
+            let today = this.$moment().format();
+            this.sunrise = this.$moment(sunRiseRaw).diff(today, 'hours');
           })
-         
+        } else {
+          this.sunhasset = false
+        }
 
+
+        this.$http.get('http://cors-anywhere.herokuapp.com/https://api.darksky.net/forecast/bfef1e60cd8ad4b63a54b6074f7ce189/' + this.lat + ',' + this.long + ',' + this.tonight).then((response) => {
+
+          this.weather = response.data.currently.summary.toLowerCase();
         })
-      
+
+
+      })
+
     },
     getNextFull() {
       this.$http.get('http://api.aerisapi.com/sunmoon/moonphases/chattanooga,tn&search?query=type:new;type:full&limit=2&client_id=jYskRupqMPlhogr2iY4i3&client_secret=pvhD0Ydih22gZXcIBDbpMzPlXdzVziJ0pyeRav3Y').then((response) => {
@@ -123,7 +127,7 @@ export default {
         let today = this.$moment().format();
         this.next = this.$moment(nextRaw).diff(today, 'days');
         this.nextnew = this.$moment(newRawNew).diff(today, 'days');
-         this.$Progress.finish()
+        this.$Progress.finish()
       })
     }
   },
@@ -131,11 +135,12 @@ export default {
     this.getWeatherDynamic();
     this.getPhase();
     this.getNextFull();
-    this.zip = localStorage.getItem('zip')
 
   },
   created() {
     this.$Progress.start()
+
+    this.zip = localStorage.getItem('zip')
   },
   watch: {
     zip() {
