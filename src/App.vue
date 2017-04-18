@@ -46,7 +46,9 @@
           </p>
         </b-field>
         <router-link to="/about">about</router-link>
+        <transition name="fade">
           <router-view></router-view>
+        </transition>
 
       </div>
     </section>
@@ -225,6 +227,13 @@ html {
   border-radius: 4px;
   padding: 5px;
   margin-bottom: 20%;
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
+  opacity: 0
 }
 
 @media only screen and (min-width: 320px) and (max-width: 769px) and (orientation: landscape) {
