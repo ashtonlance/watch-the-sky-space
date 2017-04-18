@@ -1,8 +1,10 @@
-# vue-stargazing-forecast
+# Watch the Sky
 
-> A Vue.js project that diplays the current moon phase and days until the next full moon.
+(watchthesky.space)
 
-> Uses moonmoji for groovy appropriate moon phases (https://github.com/rickycodes/moonmoji)
+> A Vue.js project that diplays the current moon phase and days until the next full moon as well as the forecast for the night
+
+
 
 ## Build Setup
 
