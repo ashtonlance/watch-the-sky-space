@@ -27,19 +27,25 @@
       <div id="weatherwrapper"
            class="is-spaced">
   
+           <!--<button class="button is-dark is-inverted is-outlined"
+                  v-on:click="getLocation()">
+            use current location
+          </button>-->
         <b-field position="centered"
                  style="margin-top:5px;">
-          <b-input class="label"
+          
+          <b-input class="label is-small"
                    type="text"
                    v-model="zip"
                    placeholder="enter zip code"></b-input>
           <p class="control">
-            <button class="button is-dark"
+            <button class="button is-dark is-inverted is-outlined is small"
                     v-on:click="getWeatherDynamic()">
-              <b-icon icon="near_me"></b-icon>
-              <span>enter</span></button>
+  
+              enter</button>
           </p>
         </b-field>
+  
       </div>
     </section>
   </div>
@@ -48,7 +54,7 @@
 <script>
 var moonmoji = require('moonmoji')();
 var zipcodes = require('zipcodes');
-
+import axios from 'axios';
 
 export default {
   name: 'app',
@@ -72,7 +78,7 @@ export default {
   methods: {
 
     getPhase() {
-      this.$http.get('http://api.aerisapi.com/sunmoon/37408?client_id=jYskRupqMPlhogr2iY4i3&client_secret=pvhD0Ydih22gZXcIBDbpMzPlXdzVziJ0pyeRav3Y').then((response) => {
+      this.$http.get('https://api.aerisapi.com/sunmoon/37408?client_id=jYskRupqMPlhogr2iY4i3&client_secret=pvhD0Ydih22gZXcIBDbpMzPlXdzVziJ0pyeRav3Y').then((response) => {
         this.phase = response.data.response[0].moon.phase.name;
         this.illum = response.data.response[0].moon.phase.illum;
         this.moon = (moonmoji.emoji);
@@ -84,33 +90,42 @@ export default {
       let now = this.$moment(startOfNight).format()
       this.tonight = this.$moment(now).add(4, 'h').format('YYYY-MM-DD hh:mm:ss')
       this.tonight = this.$moment(this.tonight).format()
+      
+      // if (localStorage.getItem('zip') === null) {        
+      //   this.zip = '37408'
+      // } else if (localStorage.getItem('zip') != null) {
+      //   this.zip = localStorage.getItem('zip')
+      // }
+        
+      
 
-      this.zip = localStorage.getItem('zip')
-      var location = zipcodes.lookup(this.zip);
-      console.log(location)
-      this.lat = location.latitude;
-      this.long = location.latitude;
-      this.city = location.city.toLowerCase();
 
-
-      this.$http.get('http://api.aerisapi.com/sunmoon/' + this.zip + '?client_id=jYskRupqMPlhogr2iY4i3&client_secret=pvhD0Ydih22gZXcIBDbpMzPlXdzVziJ0pyeRav3Y').then((response) => {
+      this.$http.get('https://api.aerisapi.com/sunmoon/' + this.zip + '?client_id=jYskRupqMPlhogr2iY4i3&client_secret=pvhD0Ydih22gZXcIBDbpMzPlXdzVziJ0pyeRav3Y').then((response) => {
         let sunsetRaw = response.data.response[0].sun.setISO;
         let today = this.$moment().format();
         this.sunset = this.$moment(sunsetRaw).diff(today, 'hours');
-
+        
         if (this.sunset <= 0) {
-          this.$http.get('http://api.aerisapi.com/sunmoon/' + this.zip + '?from=tomorrow&to=tomorrow&client_id=jYskRupqMPlhogr2iY4i3&client_secret=pvhD0Ydih22gZXcIBDbpMzPlXdzVziJ0pyeRav3Y').then((response) => {
+          this.$http.get('https://api.aerisapi.com/sunmoon/' + this.zip + '?from=tomorrow&to=tomorrow&client_id=jYskRupqMPlhogr2iY4i3&client_secret=pvhD0Ydih22gZXcIBDbpMzPlXdzVziJ0pyeRav3Y').then((response) => {
             this.sunhasset = true
             let sunRiseRaw = response.data.response[0].sun.riseISO
             let today = this.$moment().format();
             this.sunrise = this.$moment(sunRiseRaw).diff(today, 'hours');
+            var myElement = document.querySelector("#wrapper");
+            myElement.style.background = "linear-gradient(to bottom, #172635, #360e18)";
           })
         } else {
           this.sunhasset = false
         }
 
+        var location = zipcodes.lookup(this.zip);
+      
+      this.lat = location.latitude;
+      this.long = location.longitude;
+      this.city = location.city.toLowerCase();
 
-        this.$http.get('http://cors-anywhere.herokuapp.com/https://api.darksky.net/forecast/bfef1e60cd8ad4b63a54b6074f7ce189/' + this.lat + ',' + this.long + ',' + this.tonight).then((response) => {
+
+        this.$http.get('https://cors-anywhere.herokuapp.com/https://api.darksky.net/forecast/bfef1e60cd8ad4b63a54b6074f7ce189/' + this.lat + ',' + this.long + ',' + this.tonight).then((response) => {
 
           this.weather = response.data.currently.summary.toLowerCase();
         })
@@ -120,8 +135,7 @@ export default {
 
     },
     getNextFull() {
-      this.$http.get('http://api.aerisapi.com/sunmoon/moonphases/chattanooga,tn&search?query=type:new;type:full&limit=2&client_id=jYskRupqMPlhogr2iY4i3&client_secret=pvhD0Ydih22gZXcIBDbpMzPlXdzVziJ0pyeRav3Y').then((response) => {
-
+      this.$http.get('https://api.aerisapi.com/sunmoon/moonphases/chattanooga,tn&search?query=type:new;type:full&limit=2&client_id=jYskRupqMPlhogr2iY4i3&client_secret=pvhD0Ydih22gZXcIBDbpMzPlXdzVziJ0pyeRav3Y').then((response) => {
         let nextRaw = (response.data.response[1].dateTimeISO);
         let newRawNew = (response.data.response[0].dateTimeISO);
         let today = this.$moment().format();
@@ -129,18 +143,45 @@ export default {
         this.nextnew = this.$moment(newRawNew).diff(today, 'days');
         this.$Progress.finish()
       })
-    }
-  },
-  beforeMount() {
-    this.getWeatherDynamic();
-    this.getPhase();
-    this.getNextFull();
+    },
+    getLocation() {
 
+      if ("geolocation" in navigator) {
+
+        console.log('this is asking for geolocation')
+        navigator.geolocation.getCurrentPosition(function (position) {
+
+          var lat = position.coords.latitude
+          var long = position.coords.longitude;
+
+          axios.get('https://maps.googleapis.com/maps/api/geocode/json?latlng=' + lat + ',' + long + '&sensor=true').then((responselocation) => {
+            this.city = responselocation.data.results[0].address_components[2].long_name.toLowerCase();
+            this.zip = responselocation.data.results[0].address_components[6].long_name;
+          })
+          axios.get('https://cors-anywhere.herokuapp.com/https://api.darksky.net/forecast/bfef1e60cd8ad4b63a54b6074f7ce189/' + lat + ',' + long + ',' + this.tonight).then((response) => {
+
+            this.weather = response.data.currently.summary.toLowerCase();
+          })
+        }.bind(this));
+      } else {
+        this.$toast.open({
+          message: `Something went wrong and we couldn't get your location`,
+          position: 'bottom',
+          type: 'is-danger'
+        })
+      }
+    }
   },
   created() {
     this.$Progress.start()
-
-    this.zip = localStorage.getItem('zip')
+    this.getWeatherDynamic();
+    this.getPhase();
+    this.getNextFull();
+    if (localStorage.getItem('zip') === null) {        
+        this.zip = '37408'
+      } else if (localStorage.getItem('zip') != null) {
+        this.zip = localStorage.getItem('zip')
+      }
   },
   watch: {
     zip() {
