@@ -19,7 +19,8 @@
     "vue-axios": "^2.0.1",
     "vue-moment": "^2.0.2",
     "vue-progressbar": "^0.7.1",
-    "vue2-animate": "^1.0.4"
+    "vue2-animate": "^1.0.4",
+    "zipcodes": "^2.1.0"
   },
   "devDependencies": {
     "babel-core": "^6.0.0",
