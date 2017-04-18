@@ -1,8 +1,8 @@
-# Watch the Sky
+# Watch the Sky 🔭
 
 (http://watchthesky.space)
 
-> A Vue.js project that diplays the current moon phase and days until the next full moon as well as the forecast for the night
+> A Vue project that diplays the night's forecast for star gazing (Weather conditions and moon phase)
 
 
 
@@ -18,5 +18,3 @@ npm run dev
 # build for production with minification
 npm run build
 ```
-
-For detailed explanation on how things work, consult the [docs for vue-loader](http://vuejs.github.io/vue-loader).
