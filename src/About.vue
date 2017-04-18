@@ -6,7 +6,7 @@
         <div class="card">
   <header class="card-header">
     <p class="card-header-title">
-      About  <i> Watch the Sky</i>
+    <i>about watch the sky</i>
     </p>
     <a class="card-header-icon">
       <span class="icon">
@@ -16,19 +16,20 @@
   </header>
   <div class="card-content">
     <div class="content">
-      powered by <a href="https://darksky.net/poweredby/">dark sky</a>
+      this app shows you the sky conditions tonight. the brighter the moon, the less stars you'll be able to see
       <br>
-      <!--<small>11:09 PM - 1 Jan 2016</small>-->
+      <small><b>powered by <a href="https://darksky.net/poweredby/">dark sky</a></b></small>
     </div>
   </div>
   <footer class="card-footer">
     <a class="card-footer-item" href="mailto:ashton@ashtonlance.com">contact the dev</a>
-    <a class="card-footer-item">Delete</a>
+    <!--<a class="card-footer-item">Delete</a>-->
+     <router-link to="/" class="card-footer-item">home</router-link>
   </footer>
 </div>
     
   
-  <router-link to="/">home</router-link>
+ 
           <router-view></router-view>
           </section>
           </div>
