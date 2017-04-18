@@ -45,7 +45,9 @@
               enter</button>
           </p>
         </b-field>
-  
+        <router-link to="/about">about</router-link>
+          <router-view></router-view>
+
       </div>
     </section>
   </div>
@@ -91,15 +93,6 @@ export default {
       this.tonight = this.$moment(now).add(4, 'h').format('YYYY-MM-DD hh:mm:ss')
       this.tonight = this.$moment(this.tonight).format()
       
-      // if (localStorage.getItem('zip') === null) {        
-      //   this.zip = '37408'
-      // } else if (localStorage.getItem('zip') != null) {
-      //   this.zip = localStorage.getItem('zip')
-      // }
-        
-      
-
-
       this.$http.get('https://api.aerisapi.com/sunmoon/' + this.zip + '?client_id=jYskRupqMPlhogr2iY4i3&client_secret=pvhD0Ydih22gZXcIBDbpMzPlXdzVziJ0pyeRav3Y').then((response) => {
         let sunsetRaw = response.data.response[0].sun.setISO;
         let today = this.$moment().format();
@@ -132,6 +125,7 @@ export default {
 
 
       })
+      this.getNextFull()
 
     },
     getNextFull() {
@@ -155,7 +149,7 @@ export default {
           var long = position.coords.longitude;
 
           axios.get('https://maps.googleapis.com/maps/api/geocode/json?latlng=' + lat + ',' + long + '&result_type=postal_code&key=AIzaSyCGtc_cTPObI3_EnTtNbBbqswJYnsH2MMA').then((responselocation) => {
-            console.log(responselocation)
+            
             this.city = responselocation.data.results[0].address_components[1].long_name.toLowerCase();
             this.zip = responselocation.data.results[0].address_components[0].long_name;
           })
@@ -171,6 +165,7 @@ export default {
           type: 'is-danger'
         })
       }
+      this.getNextFull()
     }
   },
   created() {
@@ -223,7 +218,7 @@ html {
 
 #moonwrapper {
   font-size: 100px;
-  margin-top: 25px;
+  margin-top: 15px;
 }
 
 #weatherwrapper {

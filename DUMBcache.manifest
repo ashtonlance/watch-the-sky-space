@@ -1,16 +1,11 @@
 CACHE MANIFEST
 
+# Version 1.0000228
+# Stupid cache 
+
 CACHE:
 dist/build.js
 
 
-
-
-
 NETWORK:
 *
-
-FALLBACK:
-
-# Version 1.0000227
-# Stupid cache 
