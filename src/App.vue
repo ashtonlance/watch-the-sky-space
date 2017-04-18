@@ -27,10 +27,10 @@
       <div id="weatherwrapper"
            class="is-spaced">
   
-           <!--<button class="button is-dark is-inverted is-outlined"
+           <button class="button is-dark is-inverted is-outlined"
                   v-on:click="getLocation()">
             use current location
-          </button>-->
+          </button>
         <b-field position="centered"
                  style="margin-top:5px;">
           
@@ -154,9 +154,10 @@ export default {
           var lat = position.coords.latitude
           var long = position.coords.longitude;
 
-          axios.get('https://maps.googleapis.com/maps/api/geocode/json?latlng=' + lat + ',' + long + '&sensor=true').then((responselocation) => {
-            this.city = responselocation.data.results[0].address_components[2].long_name.toLowerCase();
-            this.zip = responselocation.data.results[0].address_components[6].long_name;
+          axios.get('https://maps.googleapis.com/maps/api/geocode/json?latlng=' + lat + ',' + long + '&result_type=postal_code&key=AIzaSyCGtc_cTPObI3_EnTtNbBbqswJYnsH2MMA').then((responselocation) => {
+            console.log(responselocation)
+            this.city = responselocation.data.results[0].address_components[1].long_name.toLowerCase();
+            this.zip = responselocation.data.results[0].address_components[0].long_name;
           })
           axios.get('https://cors-anywhere.herokuapp.com/https://api.darksky.net/forecast/bfef1e60cd8ad4b63a54b6074f7ce189/' + lat + ',' + long + ',' + this.tonight).then((response) => {
 
@@ -221,7 +222,7 @@ html {
 }
 
 #moonwrapper {
-  font-size: 120px;
+  font-size: 100px;
   margin-top: 25px;
 }
 
