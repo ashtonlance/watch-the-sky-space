@@ -1,6 +1,6 @@
 # Watch the Sky
 
-(watchthesky.space)
+(http://watchthesky.space)
 
 > A Vue.js project that diplays the current moon phase and days until the next full moon as well as the forecast for the night
 
