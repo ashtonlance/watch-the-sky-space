@@ -1,7 +1,7 @@
 <template>
   <div id="about">
     <vue-progress-bar></vue-progress-bar>
-    <section id="wrapper2">
+    <div id="wrapper2">
   
       <div class="card">
         <header class="card-header">
@@ -29,16 +29,11 @@
         <footer class="card-footer">
           <a class="card-footer-item"
              href="mailto:ashton@ashtonlance.com">contact the dev</a>
-          <!--<a class="card-footer-item">Delete</a>-->
           <router-link to="/"
                        class="card-footer-item">close</router-link>
         </footer>
       </div>
-  
-      <transition name="slide-fade">
-        <router-view></router-view>
-      </transition>
-    </section>
+    </div>
   </div>
 </template>
 
@@ -61,16 +56,18 @@ html {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #f2f2f2;
-  background: linear-gradient(to bottom, #2c3e50, #3498db);
+  background: rgba(#000, 0.85);
   background-repeat: no-repeat;
   background-attachment: fixed;
   top: 0;
   left: 0;
+  z-index: 500;
 }
 
 #wrapper2 {
-  height: 100%; // background: rgba(#000, 0.35);
-  background: linear-gradient(to bottom, #2c3e50, #3498db);
+  height: 100%; 
+  // background: rgba(#000, 0.35);
+  // background: linear-gradient(to bottom, #2c3e50, #3498db);
   padding: 25px;
   padding-top: 25px;
 }
