@@ -1,57 +1,86 @@
 <template>
   <div id="app">
-    <transition name="slide-fade">
-      <router-view></router-view>
-    </transition>
     <vue-progress-bar></vue-progress-bar>
-    <section id="wrapper"
-             class="hero is-primary">
+    <div v-bind:class="[show ? blurClass : '', bkClass]">
+      <div id="wrapper"
+           class="hero is-primary">
+        <div id="moonwrapper">
+          <h4 class="title is-4">star-gazing forecast</h4> {{ moon }}
+        </div>
+        <div style="padding-top: 0; padding-left:0.75rem;padding-right:0.75rem;padding-bottom:0"
+             class="hero-body">
   
-      <div id="moonwrapper">
-        <h4 class="title is-4">star-gazing forecast</h4> {{ moon }}
+          <h1 class="title is-3 is-spaced">{{ phase }}</h1>
+          <h2 class="title is-4 is-marginless">the moon is {{ illum }}% full</h2>
+          <p class="subtitle is-marginless">next full moon is in {{ next }} days</p>
+          <p class="subtitle is-marginless">next new moon is in {{ nextnew }} days</p>
+          <p class="subtitle is-4"
+             v-if="!sunhasset"
+             style="margin-bottom:1rem;">sunset in {{ sunset }} hours</p>
+          <p class="subtitle is-4"
+             v-if="sunhasset"
+             style="margin-bottom:1rem;">sunrise in {{ sunrise }} hours</p>
+          <h2 class="subtitle is-marginless">conditions tonight in {{ city }} </h2>
+          <h1 class="title is-marginless">will be {{ weather }} </h1>
+        </div>
+  
+        <div id="weatherwrapper"
+             class="is-spaced">
+  
+          <button class="button is-dark is-inverted is-outlined"
+                  v-on:click="getLocation()">
+            use current location
+          </button>
+          <b-field position="centered"
+                   style="margin-top:7px;margin-bottom:0px">
+  
+            <b-input class="label is-small"
+                     type="text"
+                     v-model="zip"
+                     placeholder="enter zip code"></b-input>
+            <p class="control">
+              <button class="button is-dark is-inverted is-outlined is small"
+                      v-on:click="getWeatherDynamic()">
+                enter</button>
+            </p>
+          </b-field>
+          <a v-on:click="show = true">about</a>
+        </div>
       </div>
-      <div style="padding-top: 0; padding-left:0.75rem;padding-right:0.75rem;padding-bottom:0"
-           class="hero-body">
-  
-        <h1 class="title is-3 is-spaced">{{ phase }}</h1>
-        <h2 class="title is-4 is-marginless">the moon is {{ illum }}% full</h2>
-        <p class="subtitle is-marginless">next full moon is in {{ next }} days</p>
-        <p class="subtitle is-marginless">next new moon is in {{ nextnew }} days</p>
-        <p class="subtitle is-4"
-           v-if="!sunhasset"
-           style="margin-bottom:1rem;">sunset in {{ sunset }} hours</p>
-        <p class="subtitle is-4"
-           v-if="sunhasset"
-           style="margin-bottom:1rem;">sunrise in {{ sunrise }} hours</p>
-        <h2 class="subtitle is-marginless">conditions tonight in {{ city }} </h2>
-        <h1 class="title is-marginless">will be {{ weather }} </h1>
+    </div>
+    <transition name="fade">
+      <div id="modal"
+           class="modal is-active"
+           v-if="show">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+          <header class="modal-card-head">
+            <p class="modal-card-title">watch the sky</p>
+            <button id="closeModal"
+                    class="delete"
+                    v-on:click="show = false"></button>
+          </header>
+          <section class="modal-card-body">
+            <div class="content">
+              this app shows you the sky conditions tonight.
+              <br> the brighter the moon, the less stars you'll be able to see.
+              <br>
+              <small><b>powered by <a href="https://darksky.net/poweredby/">dark sky</a></b></small>
+              <br>
+              <small><b><i>created by ashton lance</i></b></small>
+              <a href="http://ashtonlance.com"
+                 target="_blank">ashtonlance.com</a>
+            </div>
+          </section>
+          <footer class="modal-card-foot is-centered">
+            <a style="margin:auto"
+               class="button is-dark"
+               href="mailto:ashton@ashtonlance.com">contact the dev</a>
+          </footer>
+        </div>
       </div>
-  
-      <div id="weatherwrapper"
-           class="is-spaced">
-  
-        <button class="button is-dark is-inverted is-outlined"
-                v-on:click="getLocation()">
-          use current location
-        </button>
-        <b-field position="centered"
-                 style="margin-top:7px;">
-  
-          <b-input class="label is-small"
-                   type="text"
-                   v-model="zip"
-                   placeholder="enter zip code"></b-input>
-          <p class="control">
-            <button class="button is-dark is-inverted is-outlined is small"
-                    v-on:click="getWeatherDynamic()">
-  
-              enter</button>
-          </p>
-        </b-field>
-        <router-link to="/about">about</router-link>
-  
-      </div>
-    </section>
+    </transition>
+  </div>
   </div>
 </template>
 
@@ -75,7 +104,10 @@ export default {
       lat: '',
       long: '',
       sunhasset: false,
-      nextnew: ''
+      nextnew: '',
+      show: false,
+      bkClass: 'bk',
+      blurClass: 'blur'
     }
   },
 
@@ -239,34 +271,21 @@ html {
 }
 
 .fade-enter,
-.fade-leave-to
-/* .fade-leave-active in <2.1.8 */
-
-{
+.fade-leave-to {
   opacity: 0
 }
 
-
-/* Enter and leave animations can use different */
-
-
-/* durations and timing functions.              */
-
-.slide-fade-enter-active {
-  transition: all .3s ease;
+.bk {
+  transition: all 0.1s ease-out;
 }
 
-.slide-fade-leave-active {
-  transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+.blur {
+  filter: blur(2px);
+  opacity: 0.4;
 }
 
-.slide-fade-enter,
-.slide-fade-leave-to
-/* .slide-fade-leave-active for <2.1.8 */
-
-{
-  transform: translateX(10px);
-  opacity: 0;
+.modal-background {
+  background-color: rgba(10, 10, 10, 0.1) !important;
 }
 
 @media only screen and (min-width: 320px) and (max-width: 769px) and (orientation: landscape) {

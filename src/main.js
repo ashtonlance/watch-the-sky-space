@@ -7,10 +7,10 @@ import Vuetify from 'vuetify'
 import VueProgressBar from 'vue-progressbar'
 import Buefy from 'buefy'
 import 'buefy/lib/buefy.css'
-import VueRouter from 'vue-router'
-import About from './About.vue'
+// import VueRouter from 'vue-router'
+// import About from './About.vue'
 
-Vue.use(VueRouter)
+// Vue.use(VueRouter)
 Vue.use(require('vue-moment'));
 Vue.use(VueAxios, axios)
 Vue.use(Vuetify)
@@ -31,18 +31,18 @@ const options = {
 
 Vue.use(VueProgressBar, options)
 
-const routes = [
-  { path: '/', component: App },
-  { path: '/about', component: About }
-]
+// const routes = [
+//   { path: '/', component: App },
+//   { path: '/about', component: About }
+// ]
 
-const router = new VueRouter({
-  routes // short for routes: routes
-})
+// const router = new VueRouter({
+//   routes // short for routes: routes
+// })
 
 
 new Vue({
   el: '#app',
   render: h => h(App),
-  router
+  // router
 })
