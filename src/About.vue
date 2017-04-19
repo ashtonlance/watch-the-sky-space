@@ -16,9 +16,14 @@
         </header>
         <div class="card-content">
           <div class="content">
-            this app shows you the sky conditions tonight. the brighter the moon, the less stars you'll be able to see
+            this app shows you the sky conditions tonight.
+            <br>
+            the brighter the moon, the less stars you'll be able to see.
             <br>
             <small><b>powered by <a href="https://darksky.net/poweredby/">dark sky</a></b></small>
+            <br>
+            <small><b><i>created by ashton lance</i></b></small>
+            <a href="http://ashtonlance.com" target="_blank">ashtonlance.com</a>
           </div>
         </div>
         <footer class="card-footer">
@@ -26,11 +31,11 @@
              href="mailto:ashton@ashtonlance.com">contact the dev</a>
           <!--<a class="card-footer-item">Delete</a>-->
           <router-link to="/"
-                       class="card-footer-item">home</router-link>
+                       class="card-footer-item">close</router-link>
         </footer>
       </div>
   
-      <transition name="fade">
+      <transition name="slide-fade">
         <router-view></router-view>
       </transition>
     </section>
@@ -70,16 +75,7 @@ html {
   padding-top: 25px;
 }
 
-#moonwrapper {
-  font-size: 75px;
-  margin-top: 15px;
-}
 
-#weatherwrapper {
-  border-radius: 4px;
-  padding: 5px;
-  margin-bottom: 20%;
-}
 
 .fade-enter-active,
 .fade-leave-active {
@@ -94,8 +90,22 @@ html {
   opacity: 0
 }
 
+/* Enter and leave animations can use different */
+/* durations and timing functions.              */
+.slide-fade-enter-active {
+  transition: all .3s ease;
+}
+.slide-fade-leave-active {
+  transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+.slide-fade-enter, .slide-fade-leave-to
+/* .slide-fade-leave-active for <2.1.8 */ {
+  transform: translateX(10px);
+  opacity: 0;
+}
+
 @media only screen and (min-width: 320px) and (max-width: 769px) and (orientation: landscape) {
-  #app {
+  #about {
     height: 200vh;
   }
 }

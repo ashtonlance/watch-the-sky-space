@@ -32,7 +32,7 @@
             use current location
           </button>
         <b-field position="centered"
-                 style="margin-top:5px;">
+                 style="margin-top:7px;">
           
           <b-input class="label is-small"
                    type="text"
@@ -46,7 +46,7 @@
           </p>
         </b-field>
         <router-link to="/about">about</router-link>
-        <transition name="fade">
+        <transition name="slide-fade">
           <router-view></router-view>
         </transition>
 
@@ -105,7 +105,7 @@ export default {
             this.sunhasset = true
             let sunRiseRaw = response.data.response[0].sun.riseISO
             let today = this.$moment().format();
-            this.sunrise = this.$moment(sunRiseRaw).diff(today, 'hours');
+            this.sunrise = Math.abs(this.$moment(today).diff(sunRiseRaw, 'hours'));
             var myElement = document.querySelector("#wrapper");
             myElement.style.background = "linear-gradient(to bottom, #172635, #360e18)";
           })
@@ -127,7 +127,6 @@ export default {
 
 
       })
-      this.getNextFull()
 
     },
     getNextFull() {
@@ -167,14 +166,18 @@ export default {
           type: 'is-danger'
         })
       }
-      this.getNextFull()
     }
   },
-  created() {
-    this.$Progress.start()
+  mounted() {
+    
     this.getWeatherDynamic();
     this.getPhase();
     this.getNextFull();
+    
+  },
+  created() {
+    this.$Progress.start()
+
     if (localStorage.getItem('zip') === null) {        
         this.zip = '37408'
       } else if (localStorage.getItem('zip') != null) {
@@ -234,6 +237,20 @@ html {
 }
 .fade-enter, .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
   opacity: 0
+}
+
+/* Enter and leave animations can use different */
+/* durations and timing functions.              */
+.slide-fade-enter-active {
+  transition: all .3s ease;
+}
+.slide-fade-leave-active {
+  transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+.slide-fade-enter, .slide-fade-leave-to
+/* .slide-fade-leave-active for <2.1.8 */ {
+  transform: translateX(10px);
+  opacity: 0;
 }
 
 @media only screen and (min-width: 320px) and (max-width: 769px) and (orientation: landscape) {
