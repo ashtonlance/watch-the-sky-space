@@ -16,10 +16,10 @@
           <p class="subtitle is-marginless">next new moon is in {{ nextnew }} days</p>
           <p class="subtitle is-4"
              v-if="!sunhasset"
-             style="margin-bottom:1rem;">sunset in {{ sunset }} hours</p>
+             style="margin-bottom:1rem;">sunset at {{ sunset }}</p>
           <p class="subtitle is-4"
              v-if="sunhasset"
-             style="margin-bottom:1rem;">sunrise in {{ sunrise }} hours</p>
+             style="margin-bottom:1rem;">sunrise at {{ sunrise }}</p>
           <h2 class="subtitle is-marginless">conditions tonight in {{ city }} </h2>
           <h1 class="title is-marginless">will be {{ weather }} </h1>
         </div>
@@ -85,9 +85,9 @@
 </template>
 
 <script>
-var moonmoji = require('moonmoji')();
-var zipcodes = require('zipcodes');
-import axios from 'axios';
+var moonmoji = require('moonmoji')()
+var zipcodes = require('zipcodes')
+import axios from 'axios'
 
 export default {
   name: 'app',
@@ -115,9 +115,9 @@ export default {
 
     getPhase() {
       this.$http.get('https://api.aerisapi.com/sunmoon/37408?client_id=jYskRupqMPlhogr2iY4i3&client_secret=pvhD0Ydih22gZXcIBDbpMzPlXdzVziJ0pyeRav3Y').then((response) => {
-        this.phase = response.data.response[0].moon.phase.name;
-        this.illum = response.data.response[0].moon.phase.illum;
-        this.moon = (moonmoji.emoji);
+        this.phase = response.data.response[0].moon.phase.name
+        this.illum = response.data.response[0].moon.phase.illum
+        this.moon = (moonmoji.emoji)
 
       })
     },
@@ -128,34 +128,34 @@ export default {
       this.tonight = this.$moment(this.tonight).format()
 
       this.$http.get('https://api.aerisapi.com/sunmoon/' + this.zip + '?client_id=jYskRupqMPlhogr2iY4i3&client_secret=pvhD0Ydih22gZXcIBDbpMzPlXdzVziJ0pyeRav3Y').then((response) => {
-        let sunsetRaw = response.data.response[0].sun.setISO;
-        let today = this.$moment().format();
-        this.sunset = this.$moment(sunsetRaw).diff(today, 'hours');
+        var sunsetRaw = response.data.response[0].sun.setISO
+        var today = this.$moment().format()
+        this.sunset = this.$moment(sunsetRaw).format('h:mm a')
 
-        if (this.sunset <= 0) {
+        if (sunsetRaw < today) {
           this.$http.get('https://api.aerisapi.com/sunmoon/' + this.zip + '?from=tomorrow&to=tomorrow&client_id=jYskRupqMPlhogr2iY4i3&client_secret=pvhD0Ydih22gZXcIBDbpMzPlXdzVziJ0pyeRav3Y').then((response) => {
             this.sunhasset = true
-            let sunRiseRaw = response.data.response[0].sun.riseISO
-            let today = this.$moment().format();
-            console.log(today)
-            this.sunrise = this.$moment(sunRiseRaw).diff(today, 'hours');
-            var myElement = document.querySelector("#wrapper");
-            myElement.style.background = "linear-gradient(to bottom, #172635, #360e18)";
+            let sunRiseRaw = response.data.response[1].sun.riseISO
+            this.sunrise = this.$moment(sunRiseRaw).format('h:mm a')
+            var myElement = document.querySelector("#wrapper")
+            myElement.style.background = "linear-gradient(to bottom, #172635, #360e18)"
+            var myElement2 = document.querySelector("#app")
+            myElement2.style.background = "linear-gradient(to bottom, #172635, #360e18)"
           })
         } else {
           this.sunhasset = false
         }
 
-        var location = zipcodes.lookup(this.zip);
+        var location = zipcodes.lookup(this.zip)
 
-        this.lat = location.latitude;
-        this.long = location.longitude;
-        this.city = location.city.toLowerCase();
+        this.lat = location.latitude
+        this.long = location.longitude
+        this.city = location.city.toLowerCase()
 
 
         this.$http.get('https://cors-anywhere.herokuapp.com/https://api.darksky.net/forecast/bfef1e60cd8ad4b63a54b6074f7ce189/' + this.lat + ',' + this.long + ',' + this.tonight).then((response) => {
 
-          this.weather = response.data.currently.summary.toLowerCase();
+          this.weather = response.data.currently.summary.toLowerCase()
         })
 
 
@@ -164,11 +164,11 @@ export default {
     },
     getNextFull() {
       this.$http.get('https://api.aerisapi.com/sunmoon/moonphases/chattanooga,tn&search?query=type:new;type:full&limit=2&client_id=jYskRupqMPlhogr2iY4i3&client_secret=pvhD0Ydih22gZXcIBDbpMzPlXdzVziJ0pyeRav3Y').then((response) => {
-        let nextRaw = (response.data.response[1].dateTimeISO);
-        let newRawNew = (response.data.response[0].dateTimeISO);
-        let today = this.$moment().format();
-        this.next = this.$moment(nextRaw).diff(today, 'days');
-        this.nextnew = this.$moment(newRawNew).diff(today, 'days');
+        let nextRaw = (response.data.response[1].dateTimeISO)
+        let newRawNew = (response.data.response[0].dateTimeISO)
+        let today = this.$moment().format()
+        this.next = this.$moment(nextRaw).diff(today, 'days')
+        this.nextnew = this.$moment(newRawNew).diff(today, 'days')
         this.$Progress.finish()
       })
     },
@@ -180,18 +180,18 @@ export default {
         navigator.geolocation.getCurrentPosition(function (position) {
 
           var lat = position.coords.latitude
-          var long = position.coords.longitude;
+          var long = position.coords.longitude
 
           axios.get('https://maps.googleapis.com/maps/api/geocode/json?latlng=' + lat + ',' + long + '&result_type=postal_code&key=AIzaSyCGtc_cTPObI3_EnTtNbBbqswJYnsH2MMA').then((responselocation) => {
 
-            this.city = responselocation.data.results[0].address_components[1].long_name.toLowerCase();
-            this.zip = responselocation.data.results[0].address_components[0].long_name;
+            this.city = responselocation.data.results[0].address_components[1].long_name.toLowerCase()
+            this.zip = responselocation.data.results[0].address_components[0].long_name
           })
           axios.get('https://cors-anywhere.herokuapp.com/https://api.darksky.net/forecast/bfef1e60cd8ad4b63a54b6074f7ce189/' + lat + ',' + long + ',' + this.tonight).then((response) => {
 
-            this.weather = response.data.currently.summary.toLowerCase();
+            this.weather = response.data.currently.summary.toLowerCase()
           })
-        }.bind(this));
+        }.bind(this))
       } else {
         this.$toast.open({
           message: `Something went wrong and we couldn't get your location`,
@@ -203,9 +203,9 @@ export default {
   },
   mounted() {
 
-    this.getWeatherDynamic();
-    this.getPhase();
-    this.getNextFull();
+    this.getWeatherDynamic()
+    this.getPhase()
+    this.getNextFull()
 
   },
   created() {
