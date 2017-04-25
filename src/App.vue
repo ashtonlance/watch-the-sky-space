@@ -2,45 +2,32 @@
   <div id="app">
     <vue-progress-bar></vue-progress-bar>
     <div v-bind:class="[show ? blurClass : '', bkClass]">
-      <div id="wrapper"
-           class="hero is-primary">
+      <div id="wrapper" class="hero is-primary">
         <div id="moonwrapper">
           <h4 class="title is-4">star-gazing forecast</h4> {{ moon }}
         </div>
-        <div style="padding-top: 0; padding-left:0.75rem;padding-right:0.75rem;padding-bottom:0"
-             class="hero-body">
+        <div style="padding-top: 0; padding-left:0.75rem;padding-right:0.75rem;padding-bottom:0" class="hero-body">
   
           <h1 class="title is-3 is-spaced">{{ phase }}</h1>
           <h2 class="title is-4 is-marginless">the moon is {{ illum }}% full</h2>
           <p class="subtitle is-marginless">next full moon is in {{ next }} days</p>
           <p class="subtitle is-marginless">next new moon is in {{ nextnew }} days</p>
-          <p class="subtitle is-4"
-             v-if="!sunhasset"
-             style="margin-bottom:1rem;">sunset at {{ sunset }}</p>
-          <p class="subtitle is-4"
-             v-if="sunhasset"
-             style="margin-bottom:1rem;">sunrise at {{ sunrise }}</p>
+          <p class="subtitle is-4" v-if="!sunhasset" style="margin-bottom:1rem;">sunset at {{ sunset }}</p>
+          <p class="subtitle is-4" v-if="sunhasset" style="margin-bottom:1rem;">sunrise at {{ sunrise }}</p>
           <h2 class="subtitle is-marginless">conditions tonight in {{ city }} </h2>
           <h1 class="title is-marginless">will be {{ weather }} </h1>
         </div>
   
-        <div id="weatherwrapper"
-             class="is-spaced">
+        <div id="weatherwrapper" class="is-spaced">
   
-          <button class="button is-dark is-inverted is-outlined"
-                  v-on:click="getLocation()">
+          <button class="button is-dark is-inverted is-outlined" v-on:click="getLocation()">
             use current location
           </button>
-          <b-field position="centered"
-                   style="margin-top:7px;margin-bottom:0px">
+          <b-field position="centered" style="margin-top:7px;margin-bottom:0px">
   
-            <b-input class="label is-small"
-                     type="text"
-                     v-model="zip"
-                     placeholder="enter zip code"></b-input>
+            <b-input class="label is-small" type="text" v-model="zip" placeholder="enter zip code"></b-input>
             <p class="control">
-              <button class="button is-dark is-inverted is-outlined is small"
-                      v-on:click="getWeatherDynamic()">
+              <button class="button is-dark is-inverted is-outlined is small" v-on:click="getWeatherDynamic()">
                 enter</button>
             </p>
           </b-field>
@@ -49,16 +36,12 @@
       </div>
     </div>
     <transition name="fade">
-      <div id="modal"
-           class="modal is-active"
-           v-if="show">
+      <div id="modal" class="modal is-active" v-if="show">
         <div class="modal-background"></div>
         <div class="modal-card">
           <header class="modal-card-head">
             <p class="modal-card-title">watch the sky</p>
-            <button id="closeModal"
-                    class="delete"
-                    v-on:click="show = false"></button>
+            <button id="closeModal" class="delete" v-on:click="show = false"></button>
           </header>
           <section class="modal-card-body">
             <div class="content">
@@ -68,14 +51,11 @@
               <small><b>powered by <a href="https://darksky.net/poweredby/">dark sky</a></b></small>
               <br>
               <small><b><i>created by ashton lance</i></b></small>
-              <a href="http://ashtonlance.com"
-                 target="_blank">ashtonlance.com</a>
+              <a href="http://ashtonlance.com" target="_blank">ashtonlance.com</a>
             </div>
           </section>
           <footer class="modal-card-foot is-centered">
-            <a style="margin:auto"
-               class="button is-dark"
-               href="mailto:ashton@ashtonlance.com">contact the dev</a>
+            <a style="margin:auto" class="button is-dark" href="mailto:ashton@ashtonlance.com">contact the dev</a>
           </footer>
         </div>
       </div>
@@ -86,7 +66,7 @@
 
 <script>
 var moonmoji = require('moonmoji')()
-var zipcodes = require('zipcodes')
+// var zipcodes = require('zipcodes')
 import axios from 'axios'
 
 export default {
@@ -146,17 +126,23 @@ export default {
           this.sunhasset = false
         }
 
-        var location = zipcodes.lookup(this.zip)
+        this.$http.get('https://api.zippopotam.us/US/' + this.zip).then((response) => {
 
-        this.lat = location.latitude
-        this.long = location.longitude
-        this.city = location.city.toLowerCase()
+          this.lat = response.data.places[0].latitude
+          this.long = response.data.places[0].longitude
+          this.city = response.data.places[0]["place name"].toLowerCase()
+          console.log(this.lat, this.long)
+          this.$http.get('https://cors-anywhere.herokuapp.com/https://api.darksky.net/forecast/bfef1e60cd8ad4b63a54b6074f7ce189/' + this.lat + ',' + this.long + ',' + this.tonight).then((response) => {
 
-
-        this.$http.get('https://cors-anywhere.herokuapp.com/https://api.darksky.net/forecast/bfef1e60cd8ad4b63a54b6074f7ce189/' + this.lat + ',' + this.long + ',' + this.tonight).then((response) => {
-
-          this.weather = response.data.currently.summary.toLowerCase()
+            this.weather = response.data.currently.summary.toLowerCase()
+          })
         })
+
+
+        // this.$http.get('https://cors-anywhere.herokuapp.com/https://api.darksky.net/forecast/bfef1e60cd8ad4b63a54b6074f7ce189/' + this.lat + ',' + this.long + ',' + this.tonight).then((response) => {
+
+        //   this.weather = response.data.currently.summary.toLowerCase()
+        // })
 
 
       })
