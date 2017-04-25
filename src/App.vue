@@ -131,7 +131,7 @@ export default {
           this.lat = response.data.places[0].latitude
           this.long = response.data.places[0].longitude
           this.city = response.data.places[0]["place name"].toLowerCase()
-          console.log(this.lat, this.long)
+          
           this.$http.get('https://cors-anywhere.herokuapp.com/https://api.darksky.net/forecast/bfef1e60cd8ad4b63a54b6074f7ce189/' + this.lat + ',' + this.long + ',' + this.tonight).then((response) => {
 
             this.weather = response.data.currently.summary.toLowerCase()
